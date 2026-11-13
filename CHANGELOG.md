@@ -12,6 +12,10 @@ Personal learning records remain in their owning course or learner bundle.
 
 ### Added
 
+- A [repository README](README.md) covering installation, automatic OKF CLI setup
+  versus separate OKF skill installation, everyday use, knowledge-base ownership
+  and structure, and development checks.
+
 - Two local architecture views: [KB boundaries, workflows and record links](docs/visualizations/knowledge-architecture.html)
   and a [repository explorer](docs/visualizations/repository-architecture.html)
   with file-purpose tooltips, rationale, search and source connections. These
