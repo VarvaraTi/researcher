@@ -1,0 +1,967 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Learning rules v1 command inputs",
+  "description": "Select #/$defs/<command> for the command passed on argv. Semantic checks additionally run in Rust.",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/resolve-settings"
+    },
+    {
+      "$ref": "#/$defs/check-prerequisites"
+    },
+    {
+      "$ref": "#/$defs/resolve-assessments"
+    },
+    {
+      "$ref": "#/$defs/grade-answer"
+    },
+    {
+      "$ref": "#/$defs/compute-progress"
+    },
+    {
+      "$ref": "#/$defs/compute-schedule"
+    },
+    {
+      "$ref": "#/$defs/check-learning-state"
+    },
+    {
+      "$ref": "#/$defs/inspect-state"
+    },
+    {
+      "$ref": "#/$defs/save-attempt"
+    },
+    {
+      "$ref": "#/$defs/save-observation"
+    },
+    {
+      "$ref": "#/$defs/save-strategy-application"
+    },
+    {
+      "$ref": "#/$defs/publish"
+    },
+    {
+      "$ref": "#/$defs/review-support"
+    },
+    {
+      "$ref": "#/$defs/audit-learner-model"
+    }
+  ],
+  "$defs": {
+    "assistance": {
+      "enum": [
+        "none",
+        "hints",
+        "solution",
+        "cheat_sheet",
+        "unknown"
+      ]
+    },
+    "attempt": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "submission_id": {
+          "type": "string"
+        },
+        "exercise": {
+          "type": "string"
+        },
+        "session": {
+          "type": "string"
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "assistance": {
+          "$ref": "#/$defs/assistance"
+        },
+        "objective": {
+          "type": "string"
+        },
+        "evidence_kind": {
+          "type": "string"
+        },
+        "is_review": {
+          "type": "boolean"
+        },
+        "independent_eligible": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "submission_id",
+        "exercise",
+        "session",
+        "sequence",
+        "timestamp",
+        "assistance",
+        "objective",
+        "evidence_kind",
+        "is_review",
+        "independent_eligible"
+      ],
+      "additionalProperties": false
+    },
+    "assessment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "attempt": {
+          "type": "string"
+        },
+        "assessment_status": {
+          "enum": [
+            "resolved",
+            "disputed",
+            "pending"
+          ]
+        },
+        "outcome": {
+          "anyOf": [
+            {
+              "enum": [
+                "correct",
+                "partial",
+                "incorrect",
+                "unassessable"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "criteria": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "supersedes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "attempt",
+        "assessment_status",
+        "criteria"
+      ],
+      "additionalProperties": false
+    },
+    "history": {
+      "type": "object",
+      "properties": {
+        "complete": {
+          "type": "boolean"
+        },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/attempt"
+          }
+        },
+        "assessments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/assessment"
+          }
+        },
+        "disputed_assessments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assistance_updates": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/assistance"
+          }
+        }
+      },
+      "required": [
+        "complete",
+        "attempts",
+        "assessments"
+      ],
+      "additionalProperties": false
+    },
+    "objective": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "required_criteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "allowed_kinds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "required_criteria",
+        "allowed_kinds"
+      ],
+      "additionalProperties": false
+    },
+    "record": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "body": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "metadata",
+        "body"
+      ],
+      "additionalProperties": false
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "okf": {
+          "type": "string"
+        },
+        "bundle": {
+          "type": "string"
+        },
+        "scope_bundles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "study": {
+          "type": "string",
+          "pattern": "^/studies/[A-Za-z0-9_-]+/study$",
+          "description": "Required for article bundles; omit for legacy course bundles."
+        }
+      },
+      "required": [
+        "okf",
+        "bundle"
+      ],
+      "additionalProperties": false
+    },
+    "setting": {
+      "type": "object",
+      "properties": {
+        "value": {},
+        "source": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "source",
+        "version"
+      ],
+      "additionalProperties": false
+    },
+    "calendar": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "effective_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "study_days": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 7
+          }
+        }
+      },
+      "required": [
+        "version",
+        "effective_at",
+        "timezone",
+        "study_days"
+      ],
+      "additionalProperties": false
+    },
+    "work": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "seconds": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "id",
+        "seconds"
+      ],
+      "additionalProperties": false
+    },
+    "comparison": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "exact"
+            },
+            "expected": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "expected"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "trimmed"
+            },
+            "expected": {
+              "type": "string"
+            },
+            "ascii_case_insensitive": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "kind",
+            "expected",
+            "ascii_case_insensitive"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "option_set"
+            },
+            "expected": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "allowed": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "kind",
+            "expected",
+            "allowed"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "numeric"
+            },
+            "expected": {
+              "type": "number"
+            },
+            "absolute_tolerance": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "kind",
+            "expected",
+            "absolute_tolerance"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "resolve-settings": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "defaults": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/setting"
+              }
+            },
+            "global": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/setting"
+              }
+            },
+            "course": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/setting"
+              }
+            },
+            "session": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/setting"
+              }
+            }
+          },
+          "required": [
+            "defaults",
+            "global",
+            "course",
+            "session"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schema_version",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "check-prerequisites": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "nodes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "prerequisites": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 2,
+                "maxItems": 2
+              }
+            }
+          },
+          "required": [
+            "nodes",
+            "prerequisites"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schema_version",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "resolve-assessments": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "data": {
+          "$ref": "#/$defs/history"
+        }
+      },
+      "required": [
+        "schema_version",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "grade-answer": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "rule_version": {
+              "type": "string"
+            },
+            "comparison": {
+              "$ref": "#/$defs/comparison"
+            },
+            "answer": {}
+          },
+          "required": [
+            "rule_version",
+            "comparison",
+            "answer"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schema_version",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "compute-progress": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "history": {
+              "$ref": "#/$defs/history"
+            },
+            "objectives": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/objective"
+              }
+            },
+            "required_items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "completed_items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "skipped_items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "history",
+            "objectives",
+            "required_items",
+            "completed_items",
+            "skipped_items"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schema_version",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "compute-schedule": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "history": {
+              "$ref": "#/$defs/history"
+            },
+            "objectives": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/objective"
+              }
+            },
+            "calendars": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/calendar"
+              }
+            },
+            "now": {
+              "type": "string"
+            },
+            "policy_version": {
+              "const": "review-v1"
+            },
+            "budget_seconds": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 86400
+            },
+            "review_percent": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "review_estimates": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "new_work": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/work"
+              }
+            }
+          },
+          "required": [
+            "history",
+            "objectives",
+            "calendars",
+            "now",
+            "policy_version",
+            "budget_seconds",
+            "review_percent",
+            "review_estimates",
+            "new_work"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schema_version",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "check-learning-state": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "complete": {
+              "type": "boolean"
+            },
+            "records": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/record"
+              }
+            }
+          },
+          "required": [
+            "complete",
+            "records"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schema_version",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "inspect-state": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "data": {
+          "$ref": "#/$defs/context"
+        }
+      },
+      "required": [
+        "schema_version",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "save-attempt": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "context": {
+              "$ref": "#/$defs/context"
+            },
+            "record": {
+              "$ref": "#/$defs/record"
+            }
+          },
+          "required": [
+            "context",
+            "record"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schema_version",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "save-observation": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "context": {
+              "$ref": "#/$defs/context"
+            },
+            "record": {
+              "$ref": "#/$defs/record"
+            }
+          },
+          "required": [
+            "context",
+            "record"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schema_version",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "save-strategy-application": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "context": {
+              "$ref": "#/$defs/context"
+            },
+            "record": {
+              "$ref": "#/$defs/record"
+            }
+          },
+          "required": [
+            "context",
+            "record"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schema_version",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "publish": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "context": {
+              "$ref": "#/$defs/context"
+            },
+            "changeset": {
+              "type": "object"
+            },
+            "expected_digest": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "context",
+            "changeset",
+            "expected_digest"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schema_version",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "review-support": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "strategy": {
+              "type": "string"
+            },
+            "applications": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "origin_id": {
+                    "type": "string"
+                  },
+                  "strategy": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "origin_id",
+                  "strategy"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "reviewed_origins": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "threshold": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "obstructive": {
+              "type": "boolean"
+            },
+            "policy_version": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "strategy",
+            "applications",
+            "reviewed_origins",
+            "threshold",
+            "obstructive",
+            "policy_version"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schema_version",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "audit-learner-model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "data"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "context",
+            "learner_context"
+          ],
+          "properties": {
+            "context": {
+              "$ref": "#/$defs/context"
+            },
+            "learner_context": {
+              "$ref": "#/$defs/context"
+            }
+          }
+        }
+      }
+    }
+  }
+}

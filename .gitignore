@@ -1,0 +1,19 @@
+# External source checkout retained for reference only.
+/okf/
+# Project-local downloaded tools.
+/.local/
+.DS_Store
+.okf-transaction.lock
+.okf-transaction/
+# Personal learning runtime and build products.
+/learner/
+/courses/
+/okf.toml
+/okf-catalog.yaml
+/okf-catalog.local.yaml
+/learning.local.json
+/exports/
+/backups/
+/target/
+/.learning-stage-*/
+/.okf-migration/

@@ -1,0 +1,253 @@
+concepts:
+  Source:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      location:
+        type: string
+        required: true
+      format:
+        type: string
+        required: true
+      content_digest:
+        type: string
+        required: true
+      edition:
+        type: string
+        required: true
+      source_language:
+        type: string
+        required: true
+      publication_year:
+        type: int
+        required: false
+    references: {}
+  SourcePassage:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      version:
+        type: string
+        required: true
+      source_ref:
+        type: string
+        required: true
+      source_digest:
+        type: string
+        required: true
+      manifest_ref:
+        type: string
+        required: true
+      pdf_page_start:
+        type: int
+        required: true
+        min: 1
+      pdf_page_end:
+        type: int
+        required: true
+        min: 1
+      heading:
+        type: string
+        required: false
+      segmentation_status:
+        type: enum
+        required: true
+        values:
+        - clear
+        - review_required
+      index_status:
+        type: enum
+        required: true
+        values:
+        - extracted
+        - partial
+      review_status:
+        type: enum
+        required: true
+        values:
+        - unreviewed
+        - passage_checked
+        - visually_checked
+        - blocked
+    references:
+      source_ref:
+        target: Source
+        cardinality: 1..1
+      manifest_ref:
+        target: IndexManifest
+        cardinality: 1..1
+  IndexManifest:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      source_ref:
+        type: string
+        required: true
+      source_digest:
+        type: string
+        required: true
+      run_id:
+        type: string
+        required: true
+      extractor:
+        type: string
+        required: true
+      extractor_version:
+        type: string
+        required: true
+      page_count:
+        type: int
+        required: true
+        min: 0
+      indexed_ranges:
+        type: list
+        required: false
+        item: string
+      no_text_ranges:
+        type: list
+        required: false
+        item: string
+      failed_ranges:
+        type: list
+        required: false
+        item: string
+      passage_refs:
+        type: list
+        required: false
+        item: string
+      manifest_status:
+        type: enum
+        required: true
+        values:
+        - complete
+        - partial
+        - failed
+      created_at:
+        type: string
+        required: true
+      document_failure:
+        type: string
+        required: false
+    references:
+      source_ref:
+        target: Source
+        cardinality: 1..1
+      passage_refs:
+        target: SourcePassage
+        cardinality: 0..n
+  Concept:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      aliases:
+        type: list
+        required: false
+        item: string
+      broader_concepts:
+        type: list
+        required: false
+        item: string
+      related_concepts:
+        type: list
+        required: false
+        item: string
+      passage_refs:
+        type: list
+        required: false
+        item: string
+    references:
+      broader_concepts:
+        target: Concept
+        cardinality: 0..n
+      related_concepts:
+        target: Concept
+        cardinality: 0..n
+      passage_refs:
+        target: SourcePassage
+        cardinality: 0..n
+  SourceSelection:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      source_ref:
+        type: string
+        required: true
+      manifest_ref:
+        type: string
+        required: true
+    references:
+      source_ref:
+        target: Source
+        cardinality: 1..1
+      manifest_ref:
+        target: IndexManifest
+        cardinality: 1..1
+  PassageReview:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      passage_ref:
+        type: string
+        required: true
+      review_status:
+        type: enum
+        required: true
+        values:
+        - passage_checked
+        - visually_checked
+        - blocked
+      reviewed_at:
+        type: string
+        required: true
+      reviewer:
+        type: string
+        required: true
+      evidence:
+        type: string
+        required: true
+      supersedes:
+        type: string
+        required: false
+    references:
+      passage_ref:
+        target: SourcePassage
+        cardinality: 1..1
+      supersedes:
+        target: PassageReview
+        cardinality: 0..1

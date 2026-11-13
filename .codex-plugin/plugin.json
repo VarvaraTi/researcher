@@ -1,0 +1,13 @@
+{
+  "name": "researcher",
+  "version": "0.1.0",
+  "description": "Source-grounded personal learning with persistent courses, notes and progress.",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Researcher",
+    "shortDescription": "Learn from your sources and retain your progress.",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write", "Shell"],
+    "defaultPrompt": ["Start learning from my selected material."]
+  }
+}

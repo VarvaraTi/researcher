@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "data": {
+    "context": {
+      "okf": ".local/bin/okf",
+      "bundle": "tests/fixtures/workspace/courses/synthetic",
+      "scope_bundles": [
+        "learning.learner"
+      ]
+    },
+    "record": {
+      "id": "/attempts/submission-001",
+      "metadata": {
+        "type": "Attempt",
+        "schema_version": 1,
+        "title": "submission-001",
+        "exercise": "/exercises/distinct-v1",
+        "exercise_version": "1",
+        "session": "/sessions/one",
+        "objective": "/objectives/distinct",
+        "event": {
+          "id": "/attempts/submission-001",
+          "submission_id": "submission-001",
+          "exercise": "/exercises/distinct-v1",
+          "session": "/sessions/one",
+          "sequence": 1,
+          "timestamp": "2026-10-25T12:01:00Z",
+          "assistance": "none",
+          "objective": "/objectives/distinct",
+          "evidence_kind": "explanation",
+          "is_review": false,
+          "independent_eligible": true
+        }
+      },
+      "body": "Two, because repeated a counts once.\n"
+    }
+  }
+}

@@ -1,0 +1,538 @@
+concepts:
+  LearnerProfile:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      learner_identity:
+        type: string
+        required: true
+      goals:
+        type: list
+        required: false
+        item: string
+      preferences:
+        type: list
+        required: false
+        item: string
+    references:
+      goals:
+        target: LearnerGoal
+        cardinality: 0..n
+      preferences:
+        target: LearnerPreference
+        cardinality: 0..n
+  LearnerGoal:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      goal:
+        type: string
+        required: true
+      scope:
+        type: string
+        required: true
+      source:
+        type: string
+        required: true
+      created_at:
+        type: string
+        required: true
+      updated_at:
+        type: string
+        required: true
+      goal_status:
+        type: enum
+        required: true
+        values:
+        - active
+        - retired
+        - completed
+  LearnerPreference:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      setting:
+        type: string
+        required: true
+      value:
+        type: object
+        required: true
+      scope:
+        type: string
+        required: true
+      source:
+        type: string
+        required: true
+      created_at:
+        type: string
+        required: true
+      updated_at:
+        type: string
+        required: true
+      origin:
+        type: enum
+        required: true
+        values:
+        - self_report
+        - inferred
+      preference_status:
+        type: enum
+        required: true
+        values:
+        - confirmed
+        - proposed
+        - retired
+      confirmation_evidence:
+        type: string
+        required: false
+      supersedes:
+        type: string
+        required: false
+  LearnerObservation:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      origin_id:
+        type: string
+        required: true
+      observation:
+        type: string
+        required: true
+      scope:
+        type: string
+        required: true
+      observed_at:
+        type: string
+        required: true
+      author:
+        type: string
+        required: true
+      evidence:
+        type: list
+        required: true
+        item: string
+      basis:
+        type: enum
+        values:
+        - self_report
+        - interaction
+        - assessed_response
+  LearnerHypothesis:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      claim:
+        type: string
+        required: true
+      scope:
+        type: string
+        required: true
+      proposed_check:
+        type: string
+        required: true
+      author:
+        type: string
+        required: true
+      timestamp:
+        type: string
+        required: true
+      hypothesis_status:
+        type: enum
+        required: true
+        values:
+        - unconfirmed
+        - confirmed
+        - rejected
+        - retired
+      evidence:
+        type: list
+        required: true
+        item: string
+  QuestionnaireDefinition:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      instrument_source:
+        type: string
+        required: true
+      version:
+        type: string
+        required: true
+      purpose:
+        type: string
+        required: true
+      limits:
+        type: string
+        required: true
+      permitted_uses:
+        type: string
+        required: true
+      questions:
+        type: list
+        required: true
+        item: string
+      scoring_rule:
+        type: string
+        required: false
+  QuestionnaireResponse:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      learner:
+        type: string
+        required: true
+      instrument:
+        type: string
+        required: true
+      instrument_version:
+        type: string
+        required: true
+      timestamp:
+        type: string
+        required: true
+      original_answers:
+        type: object
+        required: true
+    references:
+      learner:
+        target: LearnerProfile
+        cardinality: 1..1
+      instrument:
+        target: QuestionnaireDefinition
+        cardinality: 1..1
+  QuestionnaireInterpretation:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      response:
+        type: string
+        required: true
+      author:
+        type: string
+        required: true
+      result:
+        type: string
+        required: true
+      limits:
+        type: string
+        required: true
+      proposed_support:
+        type: string
+        required: true
+      scoring_version:
+        type: string
+        required: false
+    references:
+      response:
+        target: QuestionnaireResponse
+        cardinality: 1..1
+  Note:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      author:
+        type: string
+        required: true
+      created_at:
+        type: string
+        required: true
+      related_records:
+        type: list
+        required: false
+        item: string
+    references:
+      related_records:
+        target:
+        - LearnerProfile
+        - LearnerGoal
+        - LearnerPreference
+        - LearnerObservation
+        - LearnerHypothesis
+        - QuestionnaireDefinition
+        - QuestionnaireResponse
+        - QuestionnaireInterpretation
+        - Note
+        - Question
+        - AdaptationPolicy
+        - SupportStrategy
+        - StrategyApplication
+        - PendingWork
+        cardinality: 0..n
+  Question:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      author:
+        type: string
+        required: true
+      question_status:
+        type: enum
+        required: true
+        values:
+        - open
+        - exploring
+        - resolved
+      related_records:
+        type: list
+        required: false
+        item: string
+    references:
+      related_records:
+        target:
+        - LearnerProfile
+        - LearnerGoal
+        - LearnerPreference
+        - LearnerObservation
+        - LearnerHypothesis
+        - QuestionnaireDefinition
+        - QuestionnaireResponse
+        - QuestionnaireInterpretation
+        - Note
+        - Question
+        - AdaptationPolicy
+        - SupportStrategy
+        - StrategyApplication
+        - PendingWork
+        cardinality: 0..n
+  AdaptationPolicy:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      version:
+        type: string
+        required: true
+      conditions:
+        type: string
+        required: true
+      actions:
+        type: string
+        required: true
+      constraints:
+        type: string
+        required: true
+      rationale:
+        type: string
+        required: true
+      evaluation_method:
+        type: string
+        required: true
+      policy_status:
+        type: enum
+        required: true
+        values:
+        - proposed
+        - active
+        - retired
+  SupportStrategy:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      need:
+        type: string
+        required: true
+      evidence:
+        type: string
+        required: true
+      context:
+        type: string
+        required: true
+      action:
+        type: string
+        required: true
+      constraints:
+        type: string
+        required: true
+      evaluation_method:
+        type: string
+        required: true
+      policy:
+        type: string
+        required: true
+      policy_version:
+        type: string
+        required: true
+      strategy_status:
+        type: enum
+        required: true
+        values:
+        - trial
+        - retained
+        - retired
+      outcomes:
+        type: list
+        required: false
+        item: string
+    references:
+      policy:
+        target: AdaptationPolicy
+        cardinality: 1..1
+  StrategyApplication:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      origin_id:
+        type: string
+        required: true
+      strategy:
+        type: string
+        required: true
+      policy_version:
+        type: string
+        required: true
+      reason:
+        type: string
+        required: true
+      session:
+        type: string
+        required: true
+      timestamp:
+        type: string
+        required: true
+    references:
+      strategy:
+        target: SupportStrategy
+        cardinality: 1..1
+  PendingWork:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      operation:
+        type: string
+        required: true
+      origin_id:
+        type: string
+        required: true
+      work_status:
+        type: enum
+        required: true
+        values:
+        - pending
+        - done
+        - blocked
+      references:
+        type: list
+        required: false
+        item: string
+  LearnerModelReview:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      source_id:
+        type: string
+        required: true
+      source_digest:
+        type: string
+        required: true
+      decision:
+        type: enum
+        required: true
+        values:
+        - recorded
+        - not_needed
+      reason:
+        type: string
+        required: true
+      reviewed_at:
+        type: string
+        required: true
+      assertions:
+        type: list
+        item: string
+    references:
+      assertions:
+        target:
+        - LearnerGoal
+        - LearnerPreference
+        - LearnerObservation
+        - LearnerHypothesis
+        cardinality: 0..n

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "policy_version": "support-v1",
+  "strategy_review_after_applications": 3,
+  "earlier_review_if_obstructive": true,
+  "questions_optional": true,
+  "instrument_scoring": null,
+  "candidate_actions": ["smaller_first_step", "different_explanation", "shorter_session", "worked_example", "varied_application", "optional_delayed_check"],
+  "preference_promotion": "confirm_inferred_persistent_changes",
+  "performance_and_comfort": "separate",
+  "praise": "ask_or_reuse_confirmed_preference",
+  "milestones": "ask_or_reuse_confirmed_preference",
+  "opening_suggestions": "ask_or_reuse_confirmed_preference",
+  "next_step_agreements": "ask_or_reuse_confirmed_preference"
+}

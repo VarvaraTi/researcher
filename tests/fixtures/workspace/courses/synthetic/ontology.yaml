@@ -1,0 +1,856 @@
+okf_ontology: '0.1'
+concepts:
+  Course:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      goal:
+        type: string
+        required: true
+      language:
+        type: string
+        required: true
+      timezone:
+        type: string
+      study_days:
+        type: list
+        item: int
+      time_budget_seconds:
+        type: int
+        min: 1
+      review_percent:
+        type: int
+        min: 0
+        max: 100
+      accepted_plan:
+        type: string
+    references:
+      accepted_plan:
+        target: LearningPlan
+        cardinality: 0..n
+  CourseSettings:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      learner:
+        type: string
+        required: true
+      course:
+        type: string
+        required: true
+      overrides:
+        type: object
+        required: true
+      origins:
+        type: object
+        required: true
+    references:
+      course:
+        target: Course
+        cardinality: 1..1
+      learner:
+        target: learning.learner:LearnerProfile
+        cardinality: 1..1
+  LearningPlan:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      course:
+        type: string
+        required: true
+      plan_level:
+        type: string
+        required: true
+      version:
+        type: string
+        required: true
+      plan_status:
+        type: enum
+        required: true
+        values:
+        - proposed
+        - accepted
+        - superseded
+      objectives:
+        type: list
+        required: true
+        item: string
+      activities:
+        type: list
+        item: string
+      acceptance_evidence:
+        type: string
+      supersedes:
+        type: string
+    references:
+      course:
+        target: Course
+        cardinality: 1..1
+      objectives:
+        target: Objective
+        cardinality: 1..n
+  Source:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      location:
+        type: string
+        required: true
+      format:
+        type: string
+        required: true
+      access_status:
+        type: enum
+        required: true
+        values:
+        - available
+        - inaccessible
+        - partial
+        - conflicting
+      inspected_at:
+        type: string
+  Topic:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      source_refs:
+        type: list
+        required: true
+        item: string
+      prerequisites:
+        type: list
+        item: string
+      related_topics:
+        type: list
+        item: string
+    references:
+      source_refs:
+        target: Source
+        cardinality: 1..n
+      prerequisites:
+        target: Topic
+        cardinality: 0..n
+      related_topics:
+        target: Topic
+        cardinality: 0..n
+  Objective:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      topic:
+        type: string
+        required: true
+      success_criteria:
+        type: string
+        required: true
+      contract_version:
+        type: string
+        required: true
+      prerequisites:
+        type: list
+        item: string
+      required_criteria:
+        type: list
+        required: true
+        item: string
+      allowed_kinds:
+        type: list
+        required: true
+        item: string
+    references:
+      topic:
+        target: Topic
+        cardinality: 1..1
+      prerequisites:
+        target: Objective
+        cardinality: 0..n
+  Lesson:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      version:
+        type: string
+        required: true
+      cheat_sheet:
+        type: string
+        required: true
+      readiness:
+        type: enum
+        required: true
+        values:
+        - draft
+        - ready
+        - stale
+        - blocked
+      objectives:
+        type: list
+        required: true
+        item: string
+      theory_refs:
+        type: list
+        required: true
+        item: string
+      exercise_refs:
+        type: list
+        item: string
+      estimated_seconds:
+        type: int
+        required: true
+        min: 1
+      source_review:
+        type: string
+      source_supported:
+        type: bool
+    references:
+      objectives:
+        target: Objective
+        cardinality: 1..n
+      theory_refs:
+        target: Source
+        cardinality: 1..n
+      exercise_refs:
+        target: Exercise
+        cardinality: 0..n
+      cheat_sheet:
+        target: CheatSheet
+        cardinality: 1..1
+  Exercise:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      version:
+        type: string
+        required: true
+      kind:
+        type: string
+        required: true
+      rubric:
+        type: string
+        required: true
+      objectives:
+        type: list
+        required: true
+        item: string
+      source_refs:
+        type: list
+        required: true
+        item: string
+      estimated_seconds:
+        type: int
+        required: true
+        min: 1
+    references:
+      objectives:
+        target: Objective
+        cardinality: 1..n
+      source_refs:
+        target: Source
+        cardinality: 1..n
+  CheatSheet:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      version:
+        type: string
+        required: true
+      topics:
+        type: list
+        required: true
+        item: string
+      lessons:
+        type: list
+        item: string
+      source_refs:
+        type: list
+        required: true
+        item: string
+      sections:
+        type: list
+        required: true
+        item: string
+      revealed_sections:
+        type: list
+        item: string
+      personal_additions:
+        type: list
+        item: string
+    references:
+      topics:
+        target: Topic
+        cardinality: 1..n
+      lessons:
+        target: Lesson
+        cardinality: 0..n
+      source_refs:
+        target: Source
+        cardinality: 1..n
+      personal_additions:
+        target: Note
+        cardinality: 0..n
+  Attempt:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      exercise:
+        type: string
+        required: true
+      exercise_version:
+        type: string
+        required: true
+      session:
+        type: string
+        required: true
+      objective:
+        type: string
+        required: true
+      event:
+        type: object
+        required: true
+    references:
+      exercise:
+        target: Exercise
+        cardinality: 1..1
+      session:
+        target: Session
+        cardinality: 1..1
+      objective:
+        target: Objective
+        cardinality: 1..1
+  Assessment:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      attempt:
+        type: string
+        required: true
+      assessor:
+        type: string
+        required: true
+      judgment:
+        type: object
+        required: true
+    references:
+      attempt:
+        target: Attempt
+        cardinality: 1..1
+      supersedes:
+        selector: judgment.supersedes
+        target: Assessment
+        cardinality: 0..1
+  Session:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      current_lesson:
+        type: string
+        required: true
+      current_item:
+        type: string
+        required: true
+      started_at:
+        type: string
+        required: true
+      session_status:
+        type: enum
+        required: true
+        values:
+        - active
+        - paused
+        - completed
+      completed_items:
+        type: list
+        item: string
+      skipped_items:
+        type: list
+        item: string
+      temporary_context:
+        type: object
+        required: true
+      effective_settings:
+        type: object
+        required: true
+      setting_origins:
+        type: object
+        required: true
+      strategy_applications:
+        type: list
+        item: string
+    references:
+      current_lesson:
+        target: Lesson
+        cardinality: 1..1
+  Schedule:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      objective:
+        type: string
+        required: true
+      due_date:
+        type: string
+        required: true
+      rule_version:
+        type: string
+        required: true
+      history_digest:
+        type: string
+        required: true
+      calculated_at:
+        type: string
+        required: true
+      stage:
+        type: int
+        required: true
+        min: 0
+        max: 3
+      settings:
+        type: object
+        required: true
+    references:
+      objective:
+        target: Objective
+        cardinality: 1..1
+  ReadinessChoice:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      session:
+        type: string
+        required: true
+      objective:
+        type: string
+        required: true
+      timestamp:
+        type: string
+        required: true
+      uncertainty:
+        type: string
+        required: true
+      choice:
+        type: enum
+        required: true
+        values:
+        - continue
+        - clarify
+        - optional_check
+        - pause
+    references:
+      session:
+        target: Session
+        cardinality: 1..1
+      objective:
+        target: Objective
+        cardinality: 1..1
+  SkipEvent:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      session:
+        type: string
+        required: true
+      item:
+        type: string
+        required: true
+      timestamp:
+        type: string
+        required: true
+      reason:
+        type: string
+        required: true
+    references:
+      session:
+        target: Session
+        cardinality: 1..1
+  AssistanceEvent:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      session:
+        type: string
+        required: true
+      attempt:
+        type: string
+        required: true
+      timestamp:
+        type: string
+        required: true
+      assistance:
+        type: enum
+        required: true
+        values:
+        - none
+        - hints
+        - solution
+        - cheat_sheet
+        - unknown
+    references:
+      session:
+        target: Session
+        cardinality: 1..1
+      attempt:
+        target: Attempt
+        cardinality: 1..1
+  AssessmentDispute:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      assessment:
+        type: string
+        required: true
+      reason:
+        type: string
+        required: true
+      timestamp:
+        type: string
+        required: true
+      dispute_status:
+        type: enum
+        required: true
+        values:
+        - open
+        - resolved
+      resolution:
+        type: string
+    references:
+      assessment:
+        target: Assessment
+        cardinality: 1..1
+  Note:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      author:
+        type: string
+        required: true
+      created_at:
+        type: string
+        required: true
+      related_records:
+        type: list
+        item: string
+    references:
+      related_records:
+        target:
+        - Course
+        - CourseSettings
+        - LearningPlan
+        - Source
+        - Topic
+        - Objective
+        - Lesson
+        - Exercise
+        - CheatSheet
+        - Attempt
+        - Assessment
+        - Session
+        - Schedule
+        - ReadinessChoice
+        - SkipEvent
+        - AssistanceEvent
+        - AssessmentDispute
+        - Note
+        - Question
+        - AdaptationPolicy
+        - SupportStrategy
+        - StrategyApplication
+        - PendingWork
+        cardinality: 0..n
+  Question:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      author:
+        type: string
+        required: true
+      question_status:
+        type: enum
+        required: true
+        values:
+        - open
+        - exploring
+        - resolved
+      related_records:
+        type: list
+        item: string
+    references:
+      related_records:
+        target:
+        - Course
+        - CourseSettings
+        - LearningPlan
+        - Source
+        - Topic
+        - Objective
+        - Lesson
+        - Exercise
+        - CheatSheet
+        - Attempt
+        - Assessment
+        - Session
+        - Schedule
+        - ReadinessChoice
+        - SkipEvent
+        - AssistanceEvent
+        - AssessmentDispute
+        - Note
+        - Question
+        - AdaptationPolicy
+        - SupportStrategy
+        - StrategyApplication
+        - PendingWork
+        cardinality: 0..n
+  AdaptationPolicy:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      version:
+        type: string
+        required: true
+      conditions:
+        type: string
+        required: true
+      actions:
+        type: string
+        required: true
+      constraints:
+        type: string
+        required: true
+      rationale:
+        type: string
+        required: true
+      evaluation_method:
+        type: string
+        required: true
+      policy_status:
+        type: enum
+        required: true
+        values:
+        - proposed
+        - active
+        - retired
+  SupportStrategy:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      need:
+        type: string
+        required: true
+      evidence:
+        type: string
+        required: true
+      context:
+        type: string
+        required: true
+      action:
+        type: string
+        required: true
+      constraints:
+        type: string
+        required: true
+      evaluation_method:
+        type: string
+        required: true
+      policy:
+        type: string
+        required: true
+      policy_version:
+        type: string
+        required: true
+      strategy_status:
+        type: enum
+        required: true
+        values:
+        - trial
+        - retained
+        - retired
+      outcomes:
+        type: list
+        item: string
+    references:
+      policy:
+        target: AdaptationPolicy
+        cardinality: 1..1
+  StrategyApplication:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      origin_id:
+        type: string
+        required: true
+      strategy:
+        type: string
+        required: true
+      policy_version:
+        type: string
+        required: true
+      reason:
+        type: string
+        required: true
+      session:
+        type: string
+        required: true
+      timestamp:
+        type: string
+        required: true
+    references:
+      strategy:
+        target: SupportStrategy
+        cardinality: 1..1
+  PendingWork:
+    fields:
+      schema_version:
+        type: int
+        required: true
+        min: 1
+        max: 1
+      title:
+        type: string
+        required: true
+      operation:
+        type: string
+        required: true
+      origin_id:
+        type: string
+        required: true
+      work_status:
+        type: enum
+        required: true
+        values:
+        - pending
+        - done
+        - blocked
+      references:
+        type: list
+        item: string

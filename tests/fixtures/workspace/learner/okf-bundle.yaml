@@ -1,0 +1,27 @@
+manifest_version: 1
+settings:
+  query_presets:
+    profile:
+      description: Shared learner profile records.
+      operations: [search]
+      query:
+        type: LearnerProfile
+    confirmed-preferences:
+      description: Confirmed preference records; resolve scope and precedence separately.
+      operations: [search]
+      query:
+        type: LearnerPreference
+        facet_filter:
+          - 'preference_status="confirmed"'
+    active-goals:
+      description: Active learner goals.
+      operations: [search]
+      query:
+        type: LearnerGoal
+        facet_filter:
+          - 'goal_status="active"'
+    observations:
+      description: Recorded observations, not inferred permanent preferences.
+      operations: [search]
+      query:
+        type: LearnerObservation

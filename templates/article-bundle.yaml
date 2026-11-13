@@ -1,0 +1,45 @@
+manifest_version: 1
+settings:
+  query_presets:
+    ready-lessons:
+      description: Prepared lessons; prerequisite and learner-readiness checks remain
+        separate.
+      operations:
+      - search
+      query:
+        type: Lesson
+        facet_filter:
+        - readiness="ready"
+    attempts:
+      description: All saved answers; use inspect-state to find answers without resolved
+        assessments.
+      operations:
+      - search
+      query:
+        type: Attempt
+    notes:
+      description: Saved learner notes.
+      operations:
+      - search
+      query:
+        type: Note
+    pending-work:
+      description: Pending or blocked workflow operations, not the queue of unassessed
+        answers.
+      operations:
+      - search
+      query:
+        type: PendingWork
+        facet_filter:
+        - work_status in ["pending","blocked"]
+    studies:
+      description: Standalone article studies; domains are classification labels.
+      operations:
+      - search
+      query:
+        type: Study
+  facets:
+    fields:
+    - type
+    - domains[]
+    max_distinct_values: 100

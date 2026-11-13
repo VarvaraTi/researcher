@@ -1,0 +1,3 @@
+Synthetic teaching source.
+Section 1: A set contains distinct elements. The set {a, a, b} has two elements.
+Section 2: A union contains each element present in either input set. {a,b} union {b,c} = {a,b,c}.

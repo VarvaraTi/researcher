@@ -1,0 +1,7 @@
+catalog_version: 2
+default_bundle: learning.synthetic
+bundles:
+  learning.learner:
+    location: {type: directory, path: learner}
+  learning.synthetic:
+    location: {type: directory, path: courses/synthetic}
