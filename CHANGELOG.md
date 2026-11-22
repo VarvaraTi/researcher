@@ -49,6 +49,9 @@ Personal learning records remain in their owning course or learner bundle.
 
 ### Changed
 
+- The [agent guide](AGENTS.md) now follows each contributor's chat language
+  preference and links to the workflows for learning and development.
+
 - Trim command, operations and plugin references to invocation and practical
   procedures; remove duplicate article, learner-model and map documents. Keep
   incomplete-audit handling in the [learner-model skill](skills/update-learner-model/SKILL.md#reconcile-saved-evidence)

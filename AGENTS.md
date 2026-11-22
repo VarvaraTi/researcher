@@ -1,49 +1,47 @@
 # Learning assistant project
 
-Write assistant-authored file content in English, including documentation,
-learning records, metadata descriptions, and code comments. Communicate with the
-user in Russian in chat. Apply this preference to future work; preserve original
-source material and verbatim learner submissions when exact retention is required.
+## Working with contributors
 
-Store all learner-specific visualizations, images, animations and HTML cheat sheets
-inside their owning course or article study, with versioned artifact paths and
-links to the relevant topic, lesson/sheet and sources. Never publish a canonical
-learning asset under project-level `docs/visualizations/` or a temporary directory.
-Follow [visual learning assets](docs/learning-operations.md#visual-learning-assets).
+Follow the contributor's stated language preference in chat. If none is
+available, reply in the language of their request. Write assistant-authored
+file content in English, including learner records and metadata. Preserve
+original source material and verbatim learner submissions.
 
-For a request to start, continue or manage personal learning, read
-`skills/coordinate-learning/SKILL.md` and follow its routing. This explicit file
-entry point also works when repo skills have not yet appeared in the host list.
-For implementation work, use `learning-spec.md`, `docs/learning-contracts.md` and
-relevant [ADRs](docs/adr/README.md); run `sh scripts/check-learning.sh` after code changes.
-The main specification owns current requirements; schemas/code own exact formats,
-and contracts document additional runtime semantics without duplicating schemas.
-ADRs own significant architectural choices and their rationale. Link ADRs to
-relevant specification sections and link those sections back; ordinary requirement
-edits do not require a new ADR.
-Update affected specifications and contracts alongside implementation. Distinguish
-proposed behavior, accepted requirements and actual implementation status. Keep
-plans and task lists temporary; remove completed ones after preserving unique
-requirements or rationale in their owning documents. Use Git for earlier versions.
-Before modifying files or structure, propose the scope in chat and obtain explicit
-user approval. Approval covers that scope across turns; do not request it again
-unless the scope changes. Read-only analysis does not require approval.
-After a task makes a notable user-facing or developer-facing change, add a concise
-English entry under `Unreleased` in `CHANGELOG.md`. Record the outcome and link to
-the relevant documentation; do not copy raw commit logs or routine edits.
+Before modifying files or project structure, propose the scope in chat and
+obtain explicit approval. Approval carries across turns unless the scope
+changes. Read-only analysis can proceed without approval.
 
-When an unexpected problem reveals a reusable lesson about the agent harness,
-record it in `docs/lessons-learned.md` in English. Harness lessons concern the
-agent's instructions, tools, plugins, execution environment or workflow. Capture
-the context, cause, resolution and how to avoid or diagnose a repeat. Do not use
-this file for ordinary product bugs or learner/course issues. Omit routine
-transient errors, secrets and personal data. Keep architectural decisions in
-`docs/adr/`.
+## Personal learning
 
-Keep one writer for active learning data. Personal runtime is `learner/`,
-`courses/`, `learning.local.json` and the root catalog/config, all ignored by Git.
-`tests/fixtures/` contains synthetic material only. Preserve the upstream `okf/`
-checkout and unrelated staged changes. The installed OKF CLI is pinned to 0.6.0.
-Use `.local/bin/okf` from this project, or prepend the project's `.local/bin` to
-PATH before running plugin preflight/commands. The active OKF plugin is 0.6.0
-(CLI range >=0.6.0,<0.7.0); an optional `okf/` checkout is reference material, not the runtime.
+To start, continue, or manage learning, follow the
+[learning coordinator](skills/coordinate-learning/SKILL.md) even if the host
+has not listed the skill. Store learner-specific visuals and HTML cheat sheets
+with their course or article study. Follow the
+[visual asset procedure](docs/learning-operations.md#visual-learning-assets)
+for versioning, links, and publication.
+
+## Development
+
+- Use the [specification](learning-spec.md) for current requirements, schemas
+  and code for exact formats, and [contracts](docs/learning-contracts.md) for
+  runtime semantics. Update affected documents alongside implementation and
+  distinguish proposals, accepted requirements, and implemented behavior.
+- Record significant architectural choices in [ADRs](docs/adr/README.md).
+  Link each decision and its specification section to one another.
+- Keep plans temporary. Transfer lasting requirements and rationale to their
+  owning documents before removing completed plans. Use Git for prior versions.
+- Run `sh scripts/check-learning.sh` after code changes. For notable changes,
+  record the outcome under `Unreleased` in the [changelog](CHANGELOG.md)
+  and link to the relevant documentation.
+- Record reusable lessons from unexpected agent, tool, or workflow problems
+  following the [harness lessons guide](docs/lessons-learned.md).
+
+## Local workspace
+
+Keep one writer for active learning data. Keep `learner/`, `courses/`,
+`learning.local.json`, and the root runtime catalog and configuration out of
+Git. Use only synthetic material in `tests/fixtures/`.
+
+Use the project-local `.local/bin/okf` for commands and plugin preflight.
+See [OKF setup](OKF-SETUP.md) for the pinned versions. Preserve the optional
+upstream `okf/` reference checkout and unrelated staged changes.
